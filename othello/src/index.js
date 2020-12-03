@@ -40,19 +40,26 @@ class Game extends React.Component {
         this.state = {
             squares: squares,
             blackIsNext: true,
+            black: 2,
+            white: 2,
         };
     }
 
     handleClick(i, j) {
-        const squares = this.state.squares.slice();
-        if (squares[i][j]) {
+        if (this.state.squares[i][j]) {
             return;
         }
-        squares[i][j] = this.state.blackIsNext ? 'black' : 'white';
-        this.setState({
-            squares: squares,
-            blackIsNext: !this.state.blackIsNext,
-        })
+        const playerColor = this.state.blackIsNext ? 'black' : 'white';
+        const [squares, black, white] = calcMove(this.state.squares, [i, j], playerColor);
+        if (black > this.state.black || white > this.state.white) {
+            squares[i][j] = playerColor;
+            this.setState({
+                squares: squares,
+                blackIsNext: !this.state.blackIsNext,
+                black: black + (this.state.blackIsNext ? 1 : 0),
+                white: white + (this.state.blackIsNext ? 0 : 1),
+            });
+        }
     }
 
     render () {
@@ -68,7 +75,10 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol></ol>
+                    <ul>
+                        <li>Black : {this.state.black}</li>
+                        <li>White : {this.state.white}</li>
+                    </ul>
                 </div>
             </div>
         );
@@ -79,3 +89,38 @@ ReactDom.render (
     <Game />,
     document.getElementById('root')
 );
+
+function calcMove(squares, pos, color) {
+    const squaresCopy = squares.map((row) => row.slice());
+    const [x, y] =  pos;
+    const tmp = [];
+    const checkLines = [
+        [...Array(x).keys()].map((val) => [x - val - 1, y]),
+        [...Array(Math.min(x, 7 - y)).keys()].map((val) => [x - val - 1, y + val + 1]),
+        [...Array(7 - y).keys()].map((val) => [x, y + val + 1]),
+        [...Array(7 - Math.max(x, y)).keys()].map((val) => [x + val + 1, y + val + 1]),
+        [...Array(7 - x).keys()].map((val) => [x + val + 1, y]),
+        [...Array(Math.min(7 - x, y)).keys()].map((val) => [x + val + 1, y - val - 1]),
+        [...Array(y).keys()].map((val) => [x, y - val - 1]),
+        [...Array(Math.min(x, y)).keys()].map((val) => [x - val - 1, y - val - 1]), 
+    ];
+    for (const line of checkLines) {
+        for (const [i, j] of line) {
+            if (squares[i][j] === null) {
+                break;
+            } else if (squares[i][j] === color) {
+                tmp.forEach((val) => {
+                    const [di, dj] = val;
+                    squaresCopy[di][dj] = color;
+                });
+                break;
+            } else {
+                tmp.push([i, j]);
+            }
+        }
+        tmp.length = 0;
+    }
+    const black = squaresCopy.map((row) => row.filter((val) => val === 'black').length).reduce((sum, elem) => sum + elem);
+    const white = squaresCopy.map((row) => row.filter((val) => val === 'white').length).reduce((sum, elem) => sum + elem);
+    return [squaresCopy, black, white];
+}
