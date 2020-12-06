@@ -9,6 +9,6 @@ services:
             - CHOKIDAR_USEPOLLING=true
         volumes: 
             - ./:/usr/src/app
-        command: sh -c "cd othello && yarn start"
+        command: sh -c "cd reversi && yarn start"
         ports: 
             - "3000:3000"
