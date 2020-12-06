@@ -46,7 +46,7 @@ class Game extends React.Component {
     }
 
     handleClick(i, j) {
-        if (this.state.squares[i][j]) {
+        if (calcWinner(this.state.black, this.state.white) || this.state.squares[i][j]) {
             return;
         }
         const playerColor = this.state.blackIsNext ? 'black' : 'white';
@@ -63,7 +63,13 @@ class Game extends React.Component {
     }
 
     render () {
-        const status = 'Next player: ' + (this.state.blackIsNext ? 'Black' : 'White');
+        const winner = calcWinner(this.state.black, this.state.white);
+        let status;
+        if (winner) {
+            status = winner;
+        } else {
+            status = 'Next player: ' + (this.state.blackIsNext ? 'Black' : 'White');
+        }
 
         return (
             <div className="game">
@@ -123,4 +129,16 @@ function calcMove(squares, pos, color) {
     const black = squaresCopy.map((row) => row.filter((val) => val === 'black').length).reduce((sum, elem) => sum + elem);
     const white = squaresCopy.map((row) => row.filter((val) => val === 'white').length).reduce((sum, elem) => sum + elem);
     return [squaresCopy, black, white];
+}
+
+function calcWinner(black, white) {
+    if (black === 0 || white === 0) {
+        return black ? 'First is Winner' : 'Second is Winner';
+    } else if (black + white < 64) {
+        return null;
+    } else if (black === white) {
+        return 'Draw'
+    } else {
+        return black > white ? 'First is Winner' : 'Second is Whinner';
+    }
 }
