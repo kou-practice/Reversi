@@ -52,9 +52,10 @@ export class Game extends React.Component {
         const [squares, black, white] = calcMove(this.state.squares, [i, j], playerColor);
         if (black > this.state.black || white > this.state.white) {
             squares[i][j] = playerColor;
+            const blackIsNext = calcNextPlayer(calcMove, squares, this.state.blackIsNext, this.state.black, this.state.white);
             this.setState({
                 squares: squares,
-                blackIsNext: !this.state.blackIsNext,
+                blackIsNext: blackIsNext,
                 black: black + (this.state.blackIsNext ? 1 : 0),
                 white: white + (this.state.blackIsNext ? 0 : 1),
             });
@@ -135,4 +136,21 @@ export function calcWinner(black, white) {
     } else {
         return black > white ? 'First is Winner' : 'Second is Whinner';
     }
+}
+
+export function calcNextPlayer(calcMove, squares, blackIsNext, black, white) {
+    const color = blackIsNext ? 'black' : 'white';
+    const squaresCopy = squares.map((row) => row.slice());
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if (squares[i][j] === null) {
+                continue
+            };
+            const [, newBlack, newWhite] = calcMove(squaresCopy, [i, j], color);
+            if (newBlack > black || newWhite > white) {
+                return !blackIsNext;
+            }
+        }
+    }
+    return blackIsNext;
 }
