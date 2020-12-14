@@ -30,67 +30,6 @@ export function Board(props) {
     );
 }
 
-// export class Game extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         const squares = [...Array(8)].map(() => Array(8).fill(null));
-//         squares[3][3] = squares[4][4] = 'white';
-//         squares[3][4] = squares[4][3] = 'black';
-//         this.state = {
-//             squares: squares,
-//             blackIsNext: true,
-//             black: 2,
-//             white: 2,
-//         };
-//     }
-
-//     handleClick(i, j) {
-//         if (calcWinner(this.state.black, this.state.white) || this.state.squares[i][j]) {
-//             return;
-//         }
-//         const playerColor = this.state.blackIsNext ? 'black' : 'white';
-//         const [squares, black, white] = calcMove(this.state.squares, [i, j], playerColor);
-//         if (black > this.state.black || white > this.state.white) {
-//             squares[i][j] = playerColor;
-//             const blackIsNext = calcNextPlayer(calcMove, squares, this.state.blackIsNext, this.state.black, this.state.white);
-//             this.setState({
-//                 squares: squares,
-//                 blackIsNext: blackIsNext,
-//                 black: black + (this.state.blackIsNext ? 1 : 0),
-//                 white: white + (this.state.blackIsNext ? 0 : 1),
-//             });
-//         }
-//     }
-
-//     render () {
-//         const winner = calcWinner(this.state.black, this.state.white);
-//         let status;
-//         if (winner) {
-//             status = winner;
-//         } else {
-//             status = 'Next player: ' + (this.state.blackIsNext ? 'Black' : 'White');
-//         }
-
-//         return (
-//             <div className="game">
-//                 <div className="game-board">
-//                     <Board
-//                         squares={this.state.squares}
-//                         onClick={(i, j) => this.handleClick(i, j)}
-//                     />
-//                 </div>
-//                 <div className="game-info">
-//                     <div>{status}</div>
-//                     <ul>
-//                         <li>Black : {this.state.black}</li>
-//                         <li>White : {this.state.white}</li>
-//                     </ul>
-//                 </div>
-//             </div>
-//         );
-//     }
-// }
-
 export function Game() {
     const initSquares = [...Array(8)].map(() => Array(8).fill(null));
     initSquares[3][3] = initSquares[4][4] = 'white';
